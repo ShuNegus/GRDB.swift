@@ -823,23 +823,4 @@ extension DatabasePool {
             defaultLabel: "GRDB.DatabasePool",
             purpose: "snapshot.\($databaseSnapshotCount.increment())")
     }
-    
-    // swiftlint:disable:next line_length
-#if SQLITE_ENABLE_SNAPSHOT || (!GRDBCUSTOMSQLITE && !GRDBCIPHER && (compiler(>=5.7.1) || !(os(macOS) || targetEnvironment(macCatalyst))))
-    /// Creates a database snapshot that allows concurrent accesses to an
-    /// unchanging database content, as it exists at the moment the snapshot
-    /// is created.
-    ///
-    /// - note: [**🔥 EXPERIMENTAL**](https://github.com/groue/GRDB.swift/blob/master/README.md#what-are-experimental-features)
-    ///
-    /// A ``DatabaseError`` of code `SQLITE_ERROR` is thrown if the SQLite
-    /// database is not in the [WAL mode](https://www.sqlite.org/wal.html), or
-    /// if this method is called from a database access where a write
-    /// transaction is open.
-    public func makeSnapshotPool() throws -> DatabaseSnapshotPool {
-        try unsafeReentrantRead { db in
-            try DatabaseSnapshotPool(db)
-        }
-    }
-#endif
 }
